@@ -8,4 +8,4 @@ nSquareOffshore assessment solution - .dbml, OpenAPI Specs, node.js, Express, Mo
 
 <b> API Endpoints: </b>
 
-[![OpenAPI Specifications](./backend/docs/API-spec.png)](https://github.com/10kartik/NSOS-fullstack-assessment/blob/master/backend/docs/openApi.yaml)
+[![OpenAPI Specifications](./backend/docs/API-spec.png)](https://github.com/10kartik/NSOS-fullstack-assessment/blob/master/backend/docs/openAPI.yaml)
