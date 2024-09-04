@@ -1,0 +1,22 @@
+Table Products {
+  id ObjectId [pk] // Primary key: MongoDB uses ObjectId for unique identifiers
+
+  title String [not null] // Product title: Descriptive name of the product, required
+  description String // Product description: Detailed information about the product, can be null
+  price Number [not null] // Product price: Whole number (or consider using decimal if needed), required
+
+  is_recommended Boolean [default: false] // Recommended product: Indicates if the product is recommended, defaults to false
+  is_bestSeller Boolean [default: false] // Bestseller status: Indicates if the product is a bestseller, defaults to false
+
+  status Number [not null, default: 0] // Product status: Use 0 for inactive, 1 for active, required with a default value of 0
+
+  // Indexes for efficient querying
+  indexes {
+    (title)
+    (price)
+    (is_recommended, is_bestSeller)
+  }
+
+  // Adding comments for clarity
+  note: "Collection for storing product details, including pricing, status, and recommendations."
+}

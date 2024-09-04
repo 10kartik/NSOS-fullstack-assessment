@@ -1,0 +1,163 @@
+openapi: 3.0.3
+info:
+  title: Product List API
+  description: API for managing products in the product list application.
+  version: 1.0.0
+
+servers:
+  - url: https://lambdaurl.aws.com/api
+    description: Main (production) server
+
+paths:
+  /products:
+    get:
+      summary: Get a list of all products
+      operationId: getProducts
+      responses:
+        "200":
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+      tags:
+        - Products
+
+    post:
+      summary: Add a new product
+      operationId: addProduct
+      requestBody:
+        description: Product object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Invalid input
+      tags:
+        - Products
+
+  /products/{id}:
+    get:
+      summary: Get a product by ID
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the product to retrieve
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Product not found
+      tags:
+        - Products
+
+    put:
+      summary: Update an existing product
+      operationId: updateProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the product to update
+          schema:
+            type: string
+      requestBody:
+        description: Updated product object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Invalid input
+        "404":
+          description: Product not found
+      tags:
+        - Products
+
+    delete:
+      summary: Delete a product by ID
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the product to delete
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Product deleted successfully
+        "404":
+          description: Product not found
+      tags:
+        - Products
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the product
+        title:
+          type: string
+          description: Name of the product
+        description:
+          type: string
+          description: Detailed description of the product
+        price:
+          type: number
+          description: Price of the product
+          example: 199.99
+        is_recommended:
+          type: boolean
+          description: Whether the product is recommended
+          example: false
+        is_bestSeller:
+          type: boolean
+          description: Whether the product is a bestseller
+          example: false
+        status:
+          type: number
+          description: Status of the product (0 for inactive, 1 for active)
+          example: 1
+      required:
+        - title
+        - price
+        - status
+      example:
+        id: "64b1e8f1d5f8b70d88d7d5e8"
+        title: "Wireless Headphones"
+        description: "Noise-canceling over-ear headphones with 20-hour battery life."
+        price: 299.99
+        is_recommended: true
+        is_bestSeller: false
+        status: 1
