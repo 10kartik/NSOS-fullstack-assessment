@@ -9,7 +9,14 @@ const rootPrefix = "..",
 router.get("/", async function (req, res) {
   try {
     const products = await productModel.find({});
-    console.log(products);
+    console.log("Products ", products);
+
+    if (!products) {
+      return res.status(404).json({
+        success: false,
+        message: "Products not found.",
+      });
+    }
 
     const snakeCaseProducts = products.map((product) =>
       _.mapKeys(product.toObject(), (value, key) => _.snakeCase(key))
@@ -48,6 +55,13 @@ router.post("/", async function (req, res) {
       is_best_seller: req.body.is_best_seller || false,
       status: 1,
     });
+
+    if (!newProduct) {
+      return res.status(400).json({
+        success: false,
+        message: "An error occurred while creating the product.",
+      });
+    }
 
     await newProduct.save();
 

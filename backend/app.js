@@ -24,7 +24,12 @@ mongoConnection;
 
 const logger = winston.createLogger({
   level: "info",
-  format: winston.format.json(),
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message }) => {
+      return `${timestamp} ${level.toUpperCase()}: ${message}`;
+    })
+  ),
   transports: [new winston.transports.Console()],
 });
 
@@ -91,9 +96,9 @@ const startRequestLogLine = function (req, res, next) {
  */
 const getRequestParams = function (req) {
   // IMPORTANT NOTE: Don't assign parameters before sanitization.
-  if (req.method === "POST") {
+  if (req.method === "POST" || req.method === "PUT") {
     return req.body;
-  } else if (req.method === "GET") {
+  } else if (req.method === "GET" || req.method === "DELETE") {
     return req.query;
   }
 
@@ -168,6 +173,9 @@ app.use(customMiddleware());
 app.use(
   cors({
     origin: ["http://localhost:3000"],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
     credentials: true,
   })
 );
@@ -244,7 +252,6 @@ if (coreConstants.environment === "development") {
   app.listen(8080);
   module.exports = { handler: app };
 } else {
-  console.log("Environment: ", coreConstants.environment);
   // Export the handler for Lambda on production
   console.log("Exporting handler for lambda");
   module.exports.handler = serverless(app);
