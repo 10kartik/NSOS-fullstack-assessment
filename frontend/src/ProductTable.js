@@ -1,109 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Switch from "@mui/material/Switch";
+import productService from "./services/product";
 
-const initialData = [
-  {
-    id: 1,
-    title: "Cherry Retro Cake",
-    price: 299,
-    recommended: false,
-    bestSeller: false,
-  },
-  {
-    id: 2,
-    title: "Retro Cake",
-    price: 299,
-    recommended: false,
-    bestSeller: false,
-  },
-  {
-    id: 3,
-    title: "Gender Reveal Cookies",
-    price: 69,
-    recommended: false,
-    bestSeller: false,
-  },
-  {
-    id: 4,
-    title: "Black Retro Cake",
-    price: 299,
-    recommended: false,
-    bestSeller: false,
-  },
-  {
-    id: 5,
-    title: "Classic Vintage",
-    price: 299,
-    recommended: false,
-    bestSeller: false,
-  },
-  {
-    id: 6,
-    title: "Congrats Scarf & Cap",
-    price: 15,
-    recommended: false,
-    bestSeller: false,
-  },
-  {
-    id: 7,
-    title: "Birthday Scarf & Cap",
-    price: 15,
-    recommended: false,
-    bestSeller: false,
-  },
-  {
-    id: 8,
-    title: "Congrats Sleeve",
-    price: 5,
-    recommended: false,
-    bestSeller: false,
-  },
-  {
-    id: 9,
-    title: "Birthday Sleeve",
-    price: 5,
-    recommended: false,
-    bestSeller: false,
-  },
-  {
-    id: 10,
-    title: "Confetti Gun",
-    price: 15,
-    recommended: false,
-    bestSeller: false,
-  },
-];
+
 
 const ProductTable = () => {
-  const [products, setProducts] = useState(initialData);
+  const [products, setProducts] = useState([]);
 
-  const toggleRecommended = (id) => {
-    setProducts(
-      products.map((product) =>
-        product.id === id
-          ? { ...product, recommended: !product.recommended }
-          : product
-      )
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await productService.getProducts();
+        setProducts(response.data); // Assuming the response has a data field
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const toggleRecommended = async (id) => {
+    const updatedProducts = products.map((product) =>
+      product.id === id
+        ? { ...product, is_recommended: !product.is_recommended }
+        : product
     );
+
+    setProducts(updatedProducts);
+
+    const product = updatedProducts.find((product) => product.id === id);
+    await productService.updateProduct(product);
   };
 
-  const toggleBestSeller = (id) => {
-    setProducts(
-      products.map((product) =>
-        product.id === id
-          ? { ...product, bestSeller: !product.bestSeller }
-          : product
-      )
+  const toggleBestSeller = async (id) => {
+    const updatedProducts = products.map((product) =>
+      product.id === id
+        ? { ...product, is_best_seller: !product.is_best_seller }
+        : product
     );
+
+    console.log("Products= ", updatedProducts);
+
+    setProducts(updatedProducts);
+
+    const product = updatedProducts.find((product) => product.id === id);
+    await productService.updateProduct(product);
   };
 
   const handleEdit = (id) => {
     console.log(`Edit product with id: ${id}`);
   };
 
-  const handleDelete = (id) => {
-    console.log(`Delete product with id: ${id}`);
+  const handleDelete = async (id) => {
+    try {
+      await productService.deleteProduct(id);
+      console.log(`Product with id ${id} deleted`);
+      setProducts(products.filter((product) => product.id !== id));
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
   };
 
   return (
@@ -124,13 +81,13 @@ const ProductTable = () => {
             <td>SAR {product.price}</td>
             <td>
               <Switch
-                checked={product.recommended}
+                checked={product.is_recommended}
                 onChange={() => toggleRecommended(product.id)}
               />
             </td>
             <td>
               <Switch
-                checked={product.bestSeller}
+                checked={product.is_best_seller}
                 onChange={() => toggleBestSeller(product.id)}
               />
             </td>
