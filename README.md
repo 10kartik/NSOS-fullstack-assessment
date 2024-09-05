@@ -1,6 +1,6 @@
 # NSOS-fullstack-assessment
 
-nSquareOffshore assessment solution - .dbml, OpenAPI Specs, node.js, Express, MongoDB, React, Redux.
+<b>nSquareOffshore assessment solution</b> - .dbml, OpenAPI Specs, node.js, Express, MongoDB, React, Redux.
 
 <b> Database schema and collections: </b>
 

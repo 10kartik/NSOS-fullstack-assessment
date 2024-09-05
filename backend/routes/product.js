@@ -141,8 +141,16 @@ router.put("/:id", async function (req, res) {
     product.title = req.body.title || product.title;
     product.description = req.body.description || product.description;
     product.price = req.body.price || product.price;
-    product.is_recommended = req.body.is_recommended || product.is_recommended;
-    product.is_best_seller = req.body.is_best_seller || product.is_best_seller;
+    if (req.body.hasOwnProperty("is_recommended")) {
+      product.is_recommended = req.body.is_recommended;
+    }
+
+    if (req.body.hasOwnProperty("is_best_seller")) {
+      product.is_best_seller = req.body.is_best_seller;
+    }
+    if (req.body.hasOwnProperty("status")) {
+      product.status = req.body.status;
+    }
 
     await product.save();
 
