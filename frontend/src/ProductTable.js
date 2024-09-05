@@ -3,8 +3,6 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import Switch from "@mui/material/Switch";
 import productService from "./services/product";
 
-
-
 const ProductTable = () => {
   const [products, setProducts] = useState([]);
 
@@ -42,6 +40,17 @@ const ProductTable = () => {
     );
 
     console.log("Products= ", updatedProducts);
+
+    setProducts(updatedProducts);
+
+    const product = updatedProducts.find((product) => product.id === id);
+    await productService.updateProduct(product);
+  };
+
+  const toggleStatus = async (id) => {
+    const updatedProducts = products.map((product) =>
+      product.id === id ? { ...product, status: !!!product.status } : product
+    );
 
     setProducts(updatedProducts);
 
@@ -99,6 +108,10 @@ const ProductTable = () => {
               <FaTrash
                 className="action-icon"
                 onClick={() => handleDelete(product.id)}
+              />
+              <Switch
+                checked={product.status === 1}
+                onChange={() => toggleStatus(product.id)}
               />
             </td>
           </tr>

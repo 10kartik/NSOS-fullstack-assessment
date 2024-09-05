@@ -148,6 +148,9 @@ router.put("/:id", async function (req, res) {
     if (req.body.hasOwnProperty("is_best_seller")) {
       product.is_best_seller = req.body.is_best_seller;
     }
+    if (req.body.hasOwnProperty("status")) {
+      product.status = req.body.status;
+    }
 
     await product.save();
 
