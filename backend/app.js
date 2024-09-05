@@ -172,7 +172,11 @@ const app = express();
 app.use(customMiddleware());
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: [
+      "http://localhost:3000",
+      "https://nsosfrontend.vercel.app",
+      /^https:\/\/nsosfrontend-.*\.vercel\.app$/,
+    ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
