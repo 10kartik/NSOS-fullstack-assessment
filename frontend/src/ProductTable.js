@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Switch from "@mui/material/Switch";
 import productService from "./services/product";
+import ProductModal from "./ProductModal"; // Import the ProductModal component
 
 const ProductTable = () => {
   const [products, setProducts] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -39,8 +42,6 @@ const ProductTable = () => {
         : product
     );
 
-    console.log("Products= ", updatedProducts);
-
     setProducts(updatedProducts);
 
     const product = updatedProducts.find((product) => product.id === id);
@@ -59,7 +60,10 @@ const ProductTable = () => {
   };
 
   const handleEdit = (id) => {
-    console.log(`Edit product with id: ${id}`);
+    const product = products.find((product) => product.id === id);
+    
+    setSelectedProduct(product);
+    setIsModalOpen(true);
   };
 
   const handleDelete = async (id) => {
@@ -72,52 +76,74 @@ const ProductTable = () => {
     }
   };
 
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleProductSubmit = (updatedProduct) => {
+    const updatedProducts = products.map((product) =>
+      product.id === updatedProduct.id ? updatedProduct : product
+    );
+    setProducts(updatedProducts);
+  };
+
   return (
-    <table className="product-table">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Selling Price</th>
-          <th>Recommended</th>
-          <th>Best Seller</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {products.map((product) => (
-          <tr key={product.id}>
-            <td>{product.title}</td>
-            <td>SAR {product.price}</td>
-            <td>
-              <Switch
-                checked={product.is_recommended}
-                onChange={() => toggleRecommended(product.id)}
-              />
-            </td>
-            <td>
-              <Switch
-                checked={product.is_best_seller}
-                onChange={() => toggleBestSeller(product.id)}
-              />
-            </td>
-            <td>
-              <FaEdit
-                className="action-icon"
-                onClick={() => handleEdit(product.id)}
-              />
-              <FaTrash
-                className="action-icon"
-                onClick={() => handleDelete(product.id)}
-              />
-              <Switch
-                checked={product.status === 1}
-                onChange={() => toggleStatus(product.id)}
-              />
-            </td>
+    <>
+      <table className="product-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Selling Price</th>
+            <th>Recommended</th>
+            <th>Best Seller</th>
+            <th>Actions</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {products.map((product) => (
+            <tr key={product.id}>
+              <td>{product.title}</td>
+              <td>SAR {product.price}</td>
+              <td>
+                <Switch
+                  checked={product.is_recommended}
+                  onChange={() => toggleRecommended(product.id)}
+                />
+              </td>
+              <td>
+                <Switch
+                  checked={product.is_best_seller}
+                  onChange={() => toggleBestSeller(product.id)}
+                />
+              </td>
+              <td>
+                <FaEdit
+                  className="action-icon"
+                  onClick={() => handleEdit(product.id)}
+                />
+                <FaTrash
+                  className="action-icon"
+                  onClick={() => handleDelete(product.id)}
+                />
+                <Switch
+                  checked={product.status === 1}
+                  onChange={() => toggleStatus(product.id)}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {isModalOpen && (
+        <ProductModal
+          isOpen={isModalOpen}
+          onRequestClose={handleModalClose}
+          onSubmit={handleProductSubmit}
+          product={selectedProduct}
+        />
+      )}
+    </>
   );
 };
 
